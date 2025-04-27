@@ -39,7 +39,7 @@ def main():
 
     cv2.destroyAllWindows()  # Close all OpenCV windows
     drone.land()
-    drone.end()
+    dawdasawdrone.end()
     return 0
 if __name__ == "__main__":
     main()
