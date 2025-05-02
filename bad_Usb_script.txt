@@ -1,0 +1,7 @@
+REM Wait 2 s before starting
+DELAY 1000
+
+REM Then press Right Arrow every 5 s, 100 times
+DEFAULT_DELAY 5000
+RIGHTARROW
+REPEAT 1000

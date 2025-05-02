@@ -1,0 +1,8 @@
+DELAY 2000          // Wait 2 seconds after plugging in
+STRING RightArrow Spammer Started
+ENTER
+
+REPEAT 100          // Repeat 100 times
+    DELAY 5000      // Wait 5 seconds between presses
+    RIGHTARROW      // Send the right arrow key
+END
