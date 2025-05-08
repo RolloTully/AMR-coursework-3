@@ -51,7 +51,7 @@ def DCM(vector, yaw):
 # ==================================
 # 控制器状态变量 / Controller States
 # ==================================
-error_queue = Queue(5)                     # 误差滑动窗口 / Error queue for derivative estimation
+error_queue = Queue(200)                     # 误差滑动窗口 / Error queue for derivative estimation
 error_history = []                         # 错误历史 / For ISE/ITAE计算
 time_history = []                          # 时间步历史 / For ISE/ITAE计算
 
@@ -65,7 +65,7 @@ prev_target = np.zeros(4)                  # 上一目标点 / For detecting tar
 prev_ISE = np.ones(4)
 prev_ITAE = np.ones(4)
 
-review_interval = 30                       # 调参周期（帧） / Adaptive tuning interval
+review_interval = 50                       # 调参周期（帧） / Adaptive tuning interval
 time_elapsed = 0.0
 
 MAX_DELTA = 0.12                           # 最大变化量 / Max delta for smoothness
@@ -119,19 +119,19 @@ def controller(state, target_pos, dt):
         delta_ise = ise_now - prev_ISE
         delta_itae = itae_now - prev_ITAE
 
-        P_adj = np.where(np.abs(delta_ise) > 0.01, np.where(delta_ise > 0, -0.005, 0.003), 0.0)
-        D_adj = np.where(np.abs(delta_itae) > 0.01, np.where(delta_itae > 0, -0.007, 0.004), 0.0)
+        P_adj = np.where(np.abs(delta_ise) > 0.05, np.where(delta_ise > 0, -0.05, 0.02), 0.0)
+        D_adj = np.where(np.abs(delta_itae) > 0.05, np.where(delta_itae > 0, -0.05, 0.02), 0.0)
 
-        control_gains[0] = np.clip(control_gains[0] * (1 + P_adj), 0.1, 1.5)
-        control_gains[1] = np.clip(control_gains[1] * (1 + D_adj), 0.05, 1.0)
+        control_gains[0] = np.clip(control_gains[0] * (1 + P_adj), 0.1, 10)
+        control_gains[1] = np.clip(control_gains[1] * (1 + D_adj), 0.05, 10.0)
 
         prev_ISE, prev_ITAE = ise_now, itae_now
         error_history, time_history = [], []
-
+        print(control_gains)
         P_history.append(control_gains[0])
         D_history.append(control_gains[1])
-        ISE_history.append(ISE_loss)
-        ITAE_history.append(ITAE_loss)
+        #ISE_history.append(ISE_loss)
+        #ITAE_history.append(ITAE_loss)
 
     # === 导数估计 / Estimate derivative ===
     error_array = error_queue()
